@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'app_usuarios',
     'app_horario',
+    'app_asistencias',
     'rest_framework',
 ]
 
