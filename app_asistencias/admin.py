@@ -11,8 +11,8 @@ class AsistenciaAdmin(admin.ModelAdmin):
     ordering = ('-fecha_asistencia',)
 
     def materia_info(self, obj):
-        return f"{obj.codigo_hora.id_materia.nombre_materia} - {obj.codigo_hora.salon} - {obj.codigo_hora.hora_inicio} a {obj.codigo_hora.hora_fin}"
-    materia_info.short_description = 'Materia Info'  # Nombre visual del campo
+        return f"{obj.codigo_hora.id_materia.nombre_materia} - {obj.codigo_hora.dia_semana} - {obj.codigo_hora.salon} - {obj.codigo_hora.hora_inicio} a {obj.codigo_hora.hora_fin}"
+    materia_info.short_description = 'Materia Info'
 
     def save_model(self, request, obj, form, change):
         # Aquí puedes agregar lógica adicional si es necesario
