@@ -1,20 +1,5 @@
 from django.db import models
 
-class Horario(models.Model):
-    codigo_hora = models.CharField(max_length=10)
-    id_materia = models.ForeignKey('Materias', on_delete=models.CASCADE)  # Nombre del modelo en plural
-    id_carrera = models.ForeignKey('Carreras', on_delete=models.CASCADE)  # Nombre del modelo en plural
-    id_facultad = models.ForeignKey('Facultades', on_delete=models.CASCADE)  # Nombre del modelo en plural
-    dia_semana = models.CharField(max_length=10)
-    hora_inicio = models.TimeField()
-    hora_fin = models.TimeField()
-    salon = models.CharField(max_length=50)
-    profesor = models.CharField(max_length=100)
-
-    def __str__(self):
-        return f"{self.codigo_hora} - {self.dia_semana} {self.hora_inicio} - {self.hora_fin}"
-
-
 class Estudiantes(models.Model):
     id_estudiante = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=100)
