@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Horario del Estudiante</title>
+</head>
+<body>
+    <h1>Horario del Estudiante</h1>
+    <h2>{{ estudiante.nombre }}</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Hora</th>
+                <th>Lunes</th>
+                <th>Martes</th>
+                <th>Miércoles</th>
+                <th>Jueves</th>
+                <th>Viernes</th>
+                <th>Sábado</th>
+                <th>Domingo</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for intervalo in horario_lista %}
+            <tr>
+                <td>{{ intervalo.hora_inicio }} - {{ intervalo.hora_fin }}</td>
+                <td>{{ intervalo.Lunes|safe }}</td>
+                <td>{{ intervalo.Martes|safe }}</td>
+                <td>{{ intervalo.Miércoles|safe }}</td>
+                <td>{{ intervalo.Jueves|safe }}</td>
+                <td>{{ intervalo.Viernes|safe }}</td>
+                <td>{{ intervalo.Sábado|safe }}</td>
+                <td>{{ intervalo.Domingo|safe }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="8">No hay datos disponibles</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
