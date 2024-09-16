@@ -1,7 +1,10 @@
 from rest_framework import viewsets
-from .models import Estudiantes, Matriculas, CodigosHora
+from .models import Estudiantes, Materias
 from .serializer import EstudiantesSerializer
 from django.shortcuts import render
+import urllib.request
+import json
+from django.http import HttpResponse
 from datetime import datetime, time, timedelta
 
 class EstudiantesViewSet(viewsets.ModelViewSet):
@@ -23,8 +26,15 @@ dias_semana = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", 
 
 def estudiante_detalle(request, id_estudiante):
     try:
-        estudiante = Estudiantes.objects.get(id_estudiante=id_estudiante)
-        matriculas = Matriculas.objects.filter(id_estudiante=estudiante)
+        url = f'http://127.0.0.1:8000/horario/estudiantesJSON/{id_estudiante}/?format=json'
+        with urllib.request.urlopen(url) as response:
+            data = json.load(response)
+
+        estudiante_nombre = data.get('nombre', 'Desconocido')
+        horario = data.get('horario', [])
+
+        # Recuperar nombres de materias
+        materias_dict = {materia.id_materia: materia.nombre_materia for materia in Materias.objects.all()}
 
         # Inicializar un diccionario para organizar el horario por intervalo
         horario_diccionario = {inicio: {
@@ -33,32 +43,31 @@ def estudiante_detalle(request, id_estudiante):
             **{dia: "" for dia in dias_semana}
         } for inicio, fin in intervalos}
 
-        for matricula in matriculas:
-            codigo_hora = matricula.id_codigo
-            dia = codigo_hora.dia_semana
-            materia = codigo_hora.id_materia.nombre_materia
-            profesor = codigo_hora.profesor
-            salon = codigo_hora.salon  # Asegúrate de que 'aula' esté disponible
-            hora_inicio = codigo_hora.hora_inicio.strftime("%H:%M:%S")
-            hora_fin = codigo_hora.hora_fin.strftime("%H:%M:%S")
+        for clase in horario:
+            dia = clase.get('dia_semana', '')
+            materia_id = clase.get('id_materia', '')
+            profesor = clase.get('profesor', '')
+            aula = clase.get('salon', 'Aula X')
+            hora_inicio = clase.get('hora_inicio', '')
+            hora_fin = clase.get('hora_fin', '')
+
+            materia_nombre = materias_dict.get(materia_id, 'Materia Desconocida')
 
             for inicio, fin in intervalos:
                 if hora_inicio <= inicio and hora_fin > inicio:
-                    contenido = f"{materia}<br>{profesor} - Aula {salon}"
                     if horario_diccionario[inicio][dia] == "":
-                        horario_diccionario[inicio][dia] = contenido
+                        horario_diccionario[inicio][dia] = f"{materia_nombre}<br>{profesor} - {aula}"
                     else:
-                        horario_diccionario[inicio][dia] += f"<br>{contenido}"
+                        horario_diccionario[inicio][dia] += f"<br>{materia_nombre}<br>{profesor} - {aula}"
 
-        # Convertir el diccionario a una lista para pasar a la plantilla
         horario_lista = sorted(horario_diccionario.values(), key=lambda x: x['hora_inicio'])
 
         context = {
-            "estudiante": estudiante,
+            "estudiante": {"nombre": estudiante_nombre},
             "horario_lista": horario_lista
         }
 
         return render(request, 'horario_estudiante.html', context)
 
-    except Estudiantes.DoesNotExist:
-        return render(request, '404.html', {"error": "Estudiante no encontrado"}, status=404)
+    except Exception as e:
+        return HttpResponse(f"Error: {e}", status=500)
