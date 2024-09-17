@@ -53,7 +53,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'app_usuarios',
     'rest_framework',
-    'dj_asiscan'
+    'dj_asiscan',
+    'CamApp'
 ]
 
 MIDDLEWARE = [
