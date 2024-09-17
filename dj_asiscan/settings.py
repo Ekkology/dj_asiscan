@@ -35,7 +35,7 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = [env('HOST_1'),'127.0.0.1']
+ALLOWED_HOSTS = [env('HOST_1'),'127.0.0.1','localhost']
 
 
 STATICFILES_DIRS =[env('static_dir_var')]
@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'app_horario',
     'app_asistencias',
     'rest_framework',
+    'dj_asiscan'
 ]
 
 MIDDLEWARE = [

@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from dj_asiscan.view import home
+from .view import obtener_imagen
 
 
 urlpatterns = [
@@ -25,4 +26,5 @@ urlpatterns = [
     path('users/',include('app_usuarios.urls') ),
     path('horario/', include('app_horario.urls')),
     path('asistencias/', include('app_asistencias.urls')),
+    path('obtener_imagen/',obtener_imagen ),
 ]
