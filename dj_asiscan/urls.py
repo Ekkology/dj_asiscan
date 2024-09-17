@@ -18,11 +18,12 @@ from django.contrib import admin
 from django.urls import path,include
 from dj_asiscan.view import home
 from .view import obtener_imagen
-
+from CamApp import urls as cam_urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home ),
     path('users/',include('app_usuarios.urls') ),
+     path('cam/', include(cam_urls)),
     path('obtener_imagen/',obtener_imagen ),
 ]
