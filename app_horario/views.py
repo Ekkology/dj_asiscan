@@ -33,10 +33,6 @@ def estudiante_detalle(request, id_estudiante):
         estudiante_nombre = data.get('nombre', 'Desconocido')
         horario = data.get('horario', [])
 
-        # Recuperar nombres de materias
-        materias_dict = {materia.id_materia: materia.nombre_materia for materia in Materias.objects.all()}
-
-        # Inicializar un diccionario para organizar el horario por intervalo
         horario_diccionario = {inicio: {
             "hora_inicio": inicio,
             "hora_fin": fin,
@@ -45,16 +41,14 @@ def estudiante_detalle(request, id_estudiante):
 
         for clase in horario:
             dia = clase.get('dia_semana', '')
-            materia_id = clase.get('id_materia', '')
+            materia_nombre = clase.get('nombre_materia', 'Materia Desconocida')  
             profesor = clase.get('profesor', '')
             aula = clase.get('salon', 'Aula X')
             hora_inicio = clase.get('hora_inicio', '')
             hora_fin = clase.get('hora_fin', '')
 
-            materia_nombre = materias_dict.get(materia_id, 'Materia Desconocida')
-
             for inicio, fin in intervalos:
-                if hora_inicio <= inicio and hora_fin > inicio:
+                if hora_inicio <= inicio and hora_fin > inicio:  
                     if horario_diccionario[inicio][dia] == "":
                         horario_diccionario[inicio][dia] = f"{materia_nombre}<br>{profesor} - {aula}"
                     else:

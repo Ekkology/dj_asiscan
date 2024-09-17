@@ -1,15 +1,29 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Horario del Estudiante</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horario de {{ estudiante.nombre }}</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
-    <h1>Horario del Estudiante</h1>
-    <h2>{{ estudiante.nombre }}</h2>
-    <table border="1">
+    <h1>Horario de {{ estudiante.nombre }}</h1>
+    
+    <table>
         <thead>
             <tr>
-                <th>Hora</th>
+                <th>Hora Inicio</th>
+                <th>Hora Fin</th>
                 <th>Lunes</th>
                 <th>Martes</th>
                 <th>Miércoles</th>
@@ -20,23 +34,21 @@
             </tr>
         </thead>
         <tbody>
-            {% for intervalo in horario_lista %}
-            <tr>
-                <td>{{ intervalo.hora_inicio }} - {{ intervalo.hora_fin }}</td>
-                <td>{{ intervalo.Lunes|safe }}</td>
-                <td>{{ intervalo.Martes|safe }}</td>
-                <td>{{ intervalo.Miércoles|safe }}</td>
-                <td>{{ intervalo.Jueves|safe }}</td>
-                <td>{{ intervalo.Viernes|safe }}</td>
-                <td>{{ intervalo.Sábado|safe }}</td>
-                <td>{{ intervalo.Domingo|safe }}</td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="8">No hay datos disponibles</td>
-            </tr>
+            {% for horario in horario_lista %}
+                <tr>
+                    <td>{{ horario.hora_inicio }}</td>
+                    <td>{{ horario.hora_fin }}</td>
+                    <td>{{ horario.Lunes|safe }}</td>
+                    <td>{{ horario.Martes|safe }}</td>
+                    <td>{{ horario.Miercoles|safe }}</td>
+                    <td>{{ horario.Jueves|safe }}</td>
+                    <td>{{ horario.Viernes|safe }}</td>
+                    <td>{{ horario.Sabado|safe }}</td>
+                    <td>{{ horario.Domingo|safe }}</td>
+                </tr>
             {% endfor %}
         </tbody>
     </table>
+
 </body>
 </html>
