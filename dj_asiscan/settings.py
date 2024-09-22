@@ -52,6 +52,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'app_usuarios',
+    'app_horario',
+    'app_asistencias',
     'rest_framework',
     'dj_asiscan'
 ]

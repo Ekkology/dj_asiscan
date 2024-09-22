@@ -24,5 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home ),
     path('users/',include('app_usuarios.urls') ),
+    path('horario/', include('app_horario.urls')),
+    path('asistencias/', include('app_asistencias.urls')),
     path('obtener_imagen/',obtener_imagen ),
 ]

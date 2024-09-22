@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horario de {{ estudiante.nombre }}</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Horario de {{ estudiante.nombre }}</h1>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Hora Inicio</th>
+                <th>Hora Fin</th>
+                <th>Lunes</th>
+                <th>Martes</th>
+                <th>Miércoles</th>
+                <th>Jueves</th>
+                <th>Viernes</th>
+                <th>Sábado</th>
+                <th>Domingo</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for horario in horario_lista %}
+                <tr>
+                    <td>{{ horario.hora_inicio }}</td>
+                    <td>{{ horario.hora_fin }}</td>
+                    <td>{{ horario.Lunes|safe }}</td>
+                    <td>{{ horario.Martes|safe }}</td>
+                    <td>{{ horario.Miercoles|safe }}</td>
+                    <td>{{ horario.Jueves|safe }}</td>
+                    <td>{{ horario.Viernes|safe }}</td>
+                    <td>{{ horario.Sabado|safe }}</td>
+                    <td>{{ horario.Domingo|safe }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html>
