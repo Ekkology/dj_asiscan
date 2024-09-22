@@ -46,7 +46,7 @@
 
             // Función para enviar el movimiento al servidor
             function sendValueToServer(movimiento) {
-                fetch('/enviar_valor_servos', {
+                fetch('cam/display/enviar_valor_servos/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
