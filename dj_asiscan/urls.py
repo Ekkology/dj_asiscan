@@ -25,4 +25,6 @@ urlpatterns = [
     path('', home ),
     path('users/',include('app_usuarios.urls') ),
     path('obtener_imagen/',obtener_imagen ),
+    path('reportes/',include('app_reportes.urls'))
+    
 ]
