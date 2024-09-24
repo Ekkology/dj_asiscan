@@ -15,12 +15,10 @@ from django.views.decorators.csrf import csrf_exempt
 import environ
 
 
-env = environ.Env()
+
 # Configura el logging
 logging.basicConfig(level=logging.INFO)
 
-# Define tu secreto aquí (idealmente, cargado desde variables de entorno)
-GITHUB_SECRET = env('secreto_hook') # Cambia esto a tu secreto real
 
 @csrf_exempt  # Exime la verificación CSRF para esta vista
 def github_webhook(request):
@@ -31,7 +29,7 @@ def github_webhook(request):
 
         # Ejecuta el script de PowerShell
         try:
-            subprocess.call(["powershell.exe", "-ExecutionPolicy", "Bypass", "-File", "C:\\Apache24\\htdocs\\dj_asiscan\\.git\\hooks\\post-receive.ps1"])
+            subprocess.call(["powershell.exe", "-ExecutionPolicy", "Bypass", "-File", "C:\Apache24\htdocs\dj_asiscan\.git\hooks\post-receive.ps1"])
             return JsonResponse({'status': 'success'})
         except Exception as e:
             logging.error("Error executing script: %s", e)
