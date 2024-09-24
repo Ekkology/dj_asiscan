@@ -19,7 +19,7 @@ from django.urls import path, include
 from dj_asiscan.view import home
 #from .view import obtener_imagen
 from CamApp import urls as cam_urls
-
+from .view import github_webhook
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home ),
@@ -28,4 +28,5 @@ urlpatterns = [
     path('horario/', include('app_horario.urls')),  # Ruta de la rama main
     path('asistencias/', include('app_asistencias.urls')),  # Ruta de la rama main
     #path('obtener_imagen/', obtener_imagen ),
+    path('hook_1/', github_webhook ),
 ]
