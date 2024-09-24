@@ -29,7 +29,7 @@ def github_webhook(request):
 
         # Ejecuta el script de PowerShell
         try:
-            subprocess.call(["powershell.exe", "-ExecutionPolicy", "Bypass", "-File", "C:\Apache24\htdocs\dj_asiscan\.git\hooks\post-receive.ps1"])
+            subprocess.call(["powershell.exe", "-ExecutionPolicy", "Bypass", "-File", "C:\\Apache24\\htdocs\\dj_asiscan\\.git\hooks\\post-receive.ps1"])
             return JsonResponse({'status': 'success'})
         except Exception as e:
             logging.error("Error executing script: %s", e)
