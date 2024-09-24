@@ -12,15 +12,15 @@ import logging
 import hmac
 import hashlib
 from django.views.decorators.csrf import csrf_exempt
+import environ
 
 
-
-
+env = environ.Env()
 # Configura el logging
 logging.basicConfig(level=logging.INFO)
 
 # Define tu secreto aquí (idealmente, cargado desde variables de entorno)
-GITHUB_SECRET = b'mi_secreto_aqui'  # Cambia esto a tu secreto real
+GITHUB_SECRET = env('secreto_hook') # Cambia esto a tu secreto real
 
 @csrf_exempt  # Exime la verificación CSRF para esta vista
 def github_webhook(request):
