@@ -16,13 +16,11 @@ import environ
 
 
 
-@csrf_exempt  # Exime la verificación CSRF para esta vista
+@csrf_exempt  
 def github_webhook(request):
 
-    if request.method == 'GET':  # Cambia a 'GET' para ejecutar al acceder a la URL
-        # Log para verificar que la vista fue accedida
-       
-        # Ejecuta el script de PowerShell
+    if request.method == 'GET':  
+        
         try:
             subprocess.call(["powershell.exe", "-ExecutionPolicy", "Bypass", "-File", "C:\\Apache24\\htdocs\\dj_asiscan\\.git\hooks\\post-receive.ps1"])
             return JsonResponse({'status': 'success'})
