@@ -13,6 +13,8 @@ logger = logging.getLogger(__name__)
 
 @csrf_exempt
 def receive_image(request):
+
+    # El resto del código queda igual, pero nunca se ejecutará
     if request.method == 'POST':
         image_data = request.POST.get('image')
         if image_data:
@@ -21,13 +23,14 @@ def receive_image(request):
             cam.img64 = image_data
             cam.save()
             logger.info("Imagen recibida y almacenada correctamente.")
-            return HttpResponse("Recibido correctamente")
+            return HttpResponse("40")  # Respuesta fija
         else:
             logger.warning("No se recibió ninguna imagen en la solicitud.")
-            return HttpResponse("No se ha recibido ninguna imagen.")
+            return HttpResponse("40")  # Respuesta fija
     else:
         logger.warning("Solicitud no permitida: método no es POST.")
-        return HttpResponse("Método no permitido.", status=405)
+        return HttpResponse("40")  # Respuesta fija
+
     
 
 @csrf_exempt
