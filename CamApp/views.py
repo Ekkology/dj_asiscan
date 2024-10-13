@@ -13,8 +13,7 @@ logger = logging.getLogger(__name__)
 
 @csrf_exempt
 def receive_image(request):
-
-    # El resto del código queda igual, pero nunca se ejecutará
+    # Si la solicitud es POST, se procesa la imagen
     if request.method == 'POST':
         image_data = request.POST.get('image')
         if image_data:
@@ -23,15 +22,36 @@ def receive_image(request):
             cam.img64 = image_data
             cam.save()
             logger.info("Imagen recibida y almacenada correctamente.")
-            return HttpResponse("40")  # Respuesta fija
-        else:
-            logger.warning("No se recibió ninguna imagen en la solicitud.")
-            return HttpResponse("40")  # Respuesta fija
-    else:
-        logger.warning("Solicitud no permitida: método no es POST.")
-        return HttpResponse("40")  # Respuesta fija
+            
+            # Obtener el movimiento del servo
+            movimiento = Servo.objects.get(id=1)
+            if movimiento is not None:
+                return HttpResponse({movimiento})  # Devuelve el código y el movimiento
+            
+            return HttpResponse("40; No se encontró ningún valor de movimiento", status=400)  # Respuesta de error
 
+        logger.warning("No se recibió ninguna imagen en la solicitud.")
+        return HttpResponse("40; No se recibió ninguna imagen", status=400)  # Respuesta de error
+
+    logger.warning("Solicitud no permitida: método no es POST.")
+    return HttpResponse("40; Método no permitido", status=405)  # Respuesta de error
+
+
+def manejar_direccion(request):
+    if request.method == 'GET':
+        direction = request.GET.get('direction')
+        
+        if direction:
+            # Guardar la dirección en la sesión
+            request.session['direction'] = direction
+            
+            # Obtener el valor de movimiento de la base de datos
+            movimiento = Servo.objects.get(id=1)
+            
+            if movimiento is not None:
+                return HttpResponse(movimiento)
     
+    return HttpResponse('No se encontró ningún valor de movimiento', status=400)
 
 @csrf_exempt
 def display_image(request):
