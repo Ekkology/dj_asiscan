@@ -20,3 +20,17 @@ class user_serializer(serializers.ModelSerializer):
           extra_kwargs = {
             'password': {'write_only': True},
         }
+          
+#Serializer para el login
+class LoginSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)  # Campo de solo escritura
+
+    class Meta:
+        model = User
+        fields = ['username', 'password']
+
+
+#Si no funciona usar este:
+#class LoginSerializer(serializers.Serializer):
+ #   username = serializers.CharField(required=True)
+  #  password = serializers.CharField(required=True)
