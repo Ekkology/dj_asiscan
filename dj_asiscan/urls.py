@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from app_esp32_imagen.views import obtener_imagen
 from dj_asiscan.view import home
 #from .view import obtener_imagen
 from CamApp import urls as cam_urls
@@ -23,10 +24,14 @@ from .view import github_webhook
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home ),
+
     path('users/', include('app_usuarios.urls') ),
     path('cam/', include(cam_urls)),  # Ruta de la rama orlando_branch
     path('horario/', include('app_horario.urls')),  # Ruta de la rama main
     path('asistencias/', include('app_asistencias.urls')),  # Ruta de la rama main
     #path('obtener_imagen/', obtener_imagen ),
     path('hook_1/', github_webhook ),
+    path('users/',include('app_usuarios.urls') ),
+    path('obtener_imagen/',obtener_imagen ),
+    path('reportes/',include('app_reportes.urls'))
 ]

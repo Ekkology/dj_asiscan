@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'CamApp',
     'app_horario',  
     'app_asistencias', 
+    'app_reportes',
 ]
 
 MIDDLEWARE = [
