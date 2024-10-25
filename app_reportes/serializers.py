@@ -1,16 +1,15 @@
 from rest_framework  import serializers
-from models import reportes 
+from .models import Reporte
 
 
 class ReporteSerializer(serializers.ModelSerializer):
     class Meta:
-        model = reportes
-        fields = ('id_reporte', 'nombre', 'fecha', 'tipo', 'descripcion', 'usuario', 'imagen','comentarios')
-        read_only_fields = ('id_reporte',) #buscar para que es el read only fields
+        model = Reporte
+        fields = ('estudiante','materia','total_faltas','semestre')
+        read_only_fields = ('total_faltas',) 
         
 
 
 
-    
     
     
