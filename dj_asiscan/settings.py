@@ -45,6 +45,7 @@ INSTALLED_APPS = [
   #  'corsheaders',
     'app_usuarios',
     'rest_framework',
+    'rest_framework.authtoken', #para login
     'dj_asiscan',
     'CamApp',
     'app_horario',  

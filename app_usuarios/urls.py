@@ -1,7 +1,8 @@
-from os import path
+#from os import path
 from rest_framework import routers
-from .api import user_viewset,LoginViewSet
-
+from .api import user_viewset
+from . import views 
+from django.urls import path, re_path
 
 
 router = routers.DefaultRouter()
@@ -10,7 +11,8 @@ router.register('api/users',user_viewset,'User')
 
 
 urlpatterns = router.urls
-# Agregar la URL para el login manualmente
+
+# Agregar la URL para el login 
 urlpatterns = router.urls + [
-    path('api/login/', LoginViewSet.as_view({'post': 'create'}), name='login'),
+    path('login',views.login), #se puede añadir la misma logica de rutas para registro y perfil 
 ]
