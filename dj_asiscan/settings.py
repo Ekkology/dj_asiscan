@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'CamApp',
     'app_horario',  
     'app_asistencias', 
+    'rest_framework_simplejwt'
 ]
 
 MIDDLEWARE = [
@@ -102,7 +103,11 @@ EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
 
 
-
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+}
 
 # Database
 DATABASES = {
