@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'corsheaders',
+  #  'corsheaders',
     'app_usuarios',
     'rest_framework',
     'dj_asiscan',
@@ -65,9 +65,9 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'dj_asiscan.urls'
 
 
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:4321',
-]
+#CORS_ALLOWED_ORIGINS = [
+ #   'http://localhost:4321',
+#]
 
 TEMPLATES = [
     {
