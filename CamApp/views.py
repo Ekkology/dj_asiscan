@@ -7,35 +7,60 @@ import logging
 import base64
 from io import BytesIO
 from PIL import Image, UnidentifiedImageError
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 
 logger = logging.getLogger(__name__)
 # Create your views here.
 
+#@csrf_exempt
+# def receive_image(request):
+#     # Si la solicitud es POST, se procesa la imagen
+#     if request.method == 'POST':
+#         image_data = request.POST.get('image')
+#         if image_data:
+#             image_data = image_data.replace(' ', '+')
+#             cam, created = Cam.objects.get_or_create(id=1)
+#             cam.img64 = image_data
+#             cam.save()
+#             logger.info("Imagen recibida y almacenada correctamente.")
+            
+#             # Obtener el movimiento del servo
+#             movimiento = Servo.objects.get(id=1)
+#             if movimiento is not None:
+#                 return HttpResponse({movimiento})  # Devuelve el código y el movimiento
+            
+#             return HttpResponse("40; No se encontró ningún valor de movimiento", status=400)  # Respuesta de error
+
+#         logger.warning("No se recibió ninguna imagen en la solicitud.")
+#         return HttpResponse("40; No se recibió ninguna imagen", status=400)  # Respuesta de error
+
+#     logger.warning("Solicitud no permitida: método no es POST.")
+#     return HttpResponse("40; Método no permitido", status=405)  # Respuesta de error
 @csrf_exempt
 def receive_image(request):
-    # Si la solicitud es POST, se procesa la imagen
     if request.method == 'POST':
         image_data = request.POST.get('image')
         if image_data:
             image_data = image_data.replace(' ', '+')
-            cam, created = Cam.objects.get_or_create(id=1)
-            cam.img64 = image_data
-            cam.save()
-            logger.info("Imagen recibida y almacenada correctamente.")
-            
-            # Obtener el movimiento del servo
-            movimiento = Servo.objects.get(id=1)
-            if movimiento is not None:
-                return HttpResponse({movimiento})  # Devuelve el código y el movimiento
-            
-            return HttpResponse("40; No se encontró ningún valor de movimiento", status=400)  # Respuesta de error
 
+            # Enviar la imagen a través de WebSocket
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                "camera_group", {
+                    "type": "send_image",
+                    "image_data": image_data
+                }
+            )
+            
+            logger.info("Imagen recibida y enviada a través del WebSocket.")
+            return HttpResponse("Imagen recibida y enviada correctamente.")
+        
         logger.warning("No se recibió ninguna imagen en la solicitud.")
-        return HttpResponse("40; No se recibió ninguna imagen", status=400)  # Respuesta de error
+        return HttpResponse("No se recibió ninguna imagen", status=400)
 
     logger.warning("Solicitud no permitida: método no es POST.")
-    return HttpResponse("40; Método no permitido", status=405)  # Respuesta de error
-
+    return HttpResponse("Método no permitido", status=405)
 
 def manejar_direccion(request):
     if request.method == 'GET':

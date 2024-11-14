@@ -1,20 +1,18 @@
+<!-- myapp/templates/home.html -->
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pruebas Prototipo - Mi Cam</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body style="text-align: center;">
-
-    <h1>Pruebas Prototipo - Mi Cam(Prueba webhook 23)</h1>
-
+    <h1>Pruebas Prototipo - Mi Cam (Prueba webhook 23)</h1>
     <div class="camara_def1">
         <h2>Sección de Cámaras</h2>
         <img id="cameraImage" src="" alt="Imagen de la cámara">
     </div>
-
     <div class="button-container">
         <form id="servoForm" method="post">
             <button type="button" name="movimiento" value="-1" class="btn">Izquierda</button>
@@ -25,32 +23,26 @@
     </div>
 
     <script>
-        // Función para actualizar la imagen desde el servidor usando AJAX
-        function actualizarImagen() {
-            $.get("/cam/display", function(data) {
-                if (data.imagen_base64) {
-                    var imageSrc = "data:image/png;base64," + data.imagen_base64;
-                    $("#cameraImage").attr("src", imageSrc);  // Actualiza la imagen
-                } else {
-                    console.error("No se encontró ninguna imagen.");
-                }
-            });
-        }
+        document.addEventListener("DOMContentLoaded", function() {
+            // WebSocket para recibir imágenes
+            const cameraSocket = new WebSocket('ws://127.0.0.1:8000/ws/camera/');
 
-        $(document).ready(function() {
-            actualizarImagen(); // Actualiza la imagen al cargar la página
-            setInterval(actualizarImagen, 500); // Actualiza la imagen cada 0.5 segundos
+            cameraSocket.onmessage = function(e) {
+                const data = JSON.parse(e.data);
+                const imageSrc = "data:image/png;base64," + data.image;
+                document.getElementById('cameraImage').src = imageSrc;
+            };
 
+            // Funcionalidad de botones para enviar valores al servidor
             const buttons = document.querySelectorAll('.btn');
             let inactivityTimeout;
 
-            // Función para enviar el movimiento al servidor
             function sendValueToServer(movimiento) {
                 fetch('cam/display/enviar_valor_servos/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
-                        'X-CSRFToken': '{{ csrf_token }}',  // Asegúrate de tener el token CSRF disponible
+                        'X-CSRFToken': '{{ csrf_token }}',
                     },
                     body: 'movimiento=' + movimiento
                 })
@@ -59,7 +51,6 @@
                 .catch(error => console.error('Error:', error));
             }
 
-            // Función para reiniciar el temporizador de inactividad
             function resetInactivityTimeout() {
                 clearTimeout(inactivityTimeout);
                 inactivityTimeout = setTimeout(() => {
@@ -69,16 +60,15 @@
 
             buttons.forEach(button => {
                 button.addEventListener('mousedown', function() {
-                    sendValueToServer(this.value);  // Envía el valor del botón presionado
+                    sendValueToServer(this.value);
                     resetInactivityTimeout();
                 });
 
-                button.addEventListener('mouseup', resetInactivityTimeout);  // Reinicia el temporizador
+                button.addEventListener('mouseup', resetInactivityTimeout);
             });
 
             resetInactivityTimeout(); // Inicia el temporizador de inactividad
         });
     </script>
-
 </body>
 </html>

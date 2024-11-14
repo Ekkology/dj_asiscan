@@ -49,8 +49,10 @@ INSTALLED_APPS = [
     'CamApp',
     'app_horario',  
     'app_asistencias', 
-    'rest_framework_simplejwt'
+    'rest_framework_simplejwt',
+    'channels'
 ]
+
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -65,7 +67,16 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'dj_asiscan.urls'
 
-
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+        # O usa Redis o una base de datos persistente si estás trabajando en producción
+        # 'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        # 'CONFIG': {
+        #     "hosts": [('127.0.0.1', 6379)],
+        # },
+    },
+}
 #CORS_ALLOWED_ORIGINS = [
  #   'http://localhost:4321',
 #]
@@ -90,7 +101,7 @@ WSGI_APPLICATION = 'dj_asiscan.wsgi.application'
 
 CORS_ALLOW_ALL_ORIGINS = True
 
-
+ASGI_APPLICATION = 'dj_asiscan.asgi.application'
 ##### Sistema de notificaciones ((Prueba))
 
 # Configuración de correos

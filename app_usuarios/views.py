@@ -11,9 +11,19 @@ from django.contrib.auth import authenticate
 class RegisterUserView(APIView):
     def post(self, request):
         serializer = user_serializer(data=request.data)
+        role = request.data.get('role')  # Obtener el rol del request
+
         if serializer.is_valid():
             # Guardar el usuario
             user = serializer.save()
+
+            # Asignar grupo basado en el rol
+            if role:
+                try:
+                    group = Group.objects.get(name=role)
+                    user.groups.add(group)
+                except Group.DoesNotExist:
+                    return Response({'detail': 'Invalid role'}, status=status.HTTP_400_BAD_REQUEST)
 
             # Crear el token
             refresh = RefreshToken.for_user(user)

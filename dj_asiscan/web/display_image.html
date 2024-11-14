@@ -1,40 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <!-- basic meta tags and CSS -->
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>AsisScan</title>
-    
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>WebSocket Image Display</title>
 </head>
-<body style="text-align: center;">
-
-    <div class="camara_def1">
-        <h2>Sección de Cámaras</h2>
-        <img id="cameraImage" src="" alt="Imagen de la cámara 1">
-    </div>
-
+<body>
+    <h1>Display Image from WebSocket</h1>
+    <img id="image" src="" alt="Received Image" style="max-width: 100%; height: auto;">
     <script>
-        function actualizarImagen() {
-            $.get("/cam/display", function(data) {
-                if (data.imagen_base64) {
-                    // Convierte la cadena Base64 a una URL de datos
-                    var imageSrc = "data:image/png;base64," + data.imagen_base64;
-                    // Establece la URL de datos como fuente de la imagen
-                    $("#cameraImage").attr("src", imageSrc);
-                } else {
-                    console.error("No se encontró ninguna imagen en la base de datos.");
-                }
-            });
-        }
+        const imageElement = document.getElementById("image");
+        const ws = new WebSocket('ws://127.0.0.1:8000/ws/camera/');
 
-        $(document).ready(function() {
-            actualizarImagen(); // Actualiza la imagen cuando se carga la página
-            setInterval(actualizarImagen, 500); // Actualiza la imagen cada 2 segundos
-        });
+        ws.onopen = function(event) {
+            console.log("WebSocket connection established.");
+        };
+
+        ws.onmessage = function(event) {
+            console.log("Message received from server.");
+            const data = JSON.parse(event.data);
+            const imgBase64 = data.img_base64;
+            imageElement.src = `data:image/jpeg;base64,${imgBase64}`;
+        };
+
+        ws.onerror = function(event) {
+            console.error("WebSocket error:", event);
+        };
+
+        ws.onclose = function(event) {
+            console.log("WebSocket connection closed:", event);
+        };
     </script>
-
 </body>
 </html>

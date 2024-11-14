@@ -32,13 +32,34 @@ def github_webhook(request):
 
 
 
-
-
-
-
-
-
 def home(request):
     return render(request,"home.html")
 
 
+import base64
+from io import BytesIO
+from PIL import Image
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+from django.http import HttpResponse
+
+def generate_image_base64():
+    # Aquí puedes crear una imagen en memoria con PIL (Pillow)
+    image = Image.new('RGB', (100, 100), color='red')
+    buffered = BytesIO()
+    image.save(buffered, format="PNG")
+    return base64.b64encode(buffered.getvalue()).decode()
+
+def generate_image(request):
+    image_base64 = generate_image_base64()
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        'camera_group', {
+            'type': 'send_image',
+            'image_data': image_base64
+        }
+    )
+    return HttpResponse(status=200)
+
+def simulate(request):
+    return render(request, "display_image.html")
