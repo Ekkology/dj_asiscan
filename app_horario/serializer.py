@@ -10,12 +10,12 @@ class CodigosHoraSerializer(serializers.ModelSerializer):
 
 class EstudiantesSerializer(serializers.ModelSerializer):
     horario = serializers.SerializerMethodField()
+    user_id = serializers.PrimaryKeyRelatedField(source='user', read_only=True)
 
     class Meta:
         model = Estudiantes
-        fields = ['id_estudiante', 'nombre', 'horario']
+        fields = ['id_estudiante', 'nombre', 'user_id', 'horario']
 
     def get_horario(self, obj):
         matriculas = Matriculas.objects.filter(id_estudiante=obj)
         return CodigosHoraSerializer([matricula.id_codigo for matricula in matriculas], many=True).data
-

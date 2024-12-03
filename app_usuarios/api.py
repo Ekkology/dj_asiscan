@@ -1,12 +1,12 @@
 from rest_framework import permissions, viewsets
 from .models import User
-from .serializer import user_serializer
+from .serializer import UserSerializer
 from rest_framework.permissions import IsAuthenticated
 
 class user_viewset(viewsets.ModelViewSet):
     queryset = User.objects.all()
     permission_classes = [IsAuthenticated]  # Requiere autenticación para acceder a esta vista
-    serializer_class = user_serializer
+    serializer_class = UserSerializer
 
 
 
@@ -23,9 +23,9 @@ class IsProfessorUser(BasePermission):
 class AdminOnlyView(viewsets.ModelViewSet):
     queryset = User.objects.all()
     permission_classes = [IsAuthenticated, IsAdminUser]  # Solo accesible para administradores
-    serializer_class = user_serializer
+    serializer_class = UserSerializer
 
 class ProfessorOnlyView(viewsets.ModelViewSet):
     queryset = User.objects.all()
     permission_classes = [IsAuthenticated, IsProfessorUser]  # Solo accesible para profesores
-    serializer_class = user_serializer
+    serializer_class = UserSerializer

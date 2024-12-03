@@ -1,33 +1,92 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>WebSocket Image Display</title>
-</head>
-<body>
-    <h1>Display Image from WebSocket</h1>
-    <img id="image" src="" alt="Received Image" style="max-width: 100%; height: auto;">
-    <script>
-        const imageElement = document.getElementById("image");
-        const ws = new WebSocket('ws://127.0.0.1:8000/ws/camera/');
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <!-- Resumen de Estad�sticas -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-bold mb-4">Estad�sticas Generales</h2>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="text-center">
+                    <p class="text-3xl font-bold text-blue-600">{{ total_recognized }}</p>
+                    <p class="text-gray-600">Caras Reconocidas</p>
+                </div>
+                <div class="text-center">
+                    <p class="text-3xl font-bold text-red-600">{{ total_unknown }}</p>
+                    <p class="text-gray-600">Caras Desconocidas</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-bold mb-4">Personas m�s Frecuentes</h2>
+            <ul class="space-y-2">
+                {% for person in frequent_people %}
+                <li class="flex justify-between items-center">
+                    <span class="font-medium">{{ person.name }}</span>
+                    <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                        {{ person.count }} veces
+                    </span>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
 
-        ws.onopen = function(event) {
-            console.log("WebSocket connection established.");
-        };
+    <!-- �ltimas Detecciones -->
+    <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+        <h2 class="text-xl font-bold mb-4">�ltimas Detecciones</h2>
+        <div class="overflow-x-auto">
+            <table class="min-w-full table-auto">
+                <thead>
+                    <tr class="bg-gray-100">
+                        <th class="px-4 py-2">Nombre</th>
+                        <th class="px-4 py-2">Confianza</th>
+                        <th class="px-4 py-2">Fecha</th>
+                        <th class="px-4 py-2">Imagen</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for face in recognized_faces %}
+                    <tr class="border-b">
+                        <td class="px-4 py-2">{{ face.name }}</td>
+                        <td class="px-4 py-2">{{ face.confidence|floatformat:2 }}%</td>
+                        <td class="px-4 py-2">{{ face.timestamp|date:"d/m/Y H:i" }}</td>
+                        <td class="px-4 py-2">
+                            {% if face.processed_image %}
+                            <img src="{{ face.processed_image.url }}" 
+                                 alt="Detected face" 
+                                 class="h-12 w-12 object-cover rounded">
+                            {% else %}
+                            No disponible
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-        ws.onmessage = function(event) {
-            console.log("Message received from server.");
-            const data = JSON.parse(event.data);
-            const imgBase64 = data.img_base64;
-            imageElement.src = `data:image/jpeg;base64,${imgBase64}`;
-        };
-
-        ws.onerror = function(event) {
-            console.error("WebSocket error:", event);
-        };
-
-        ws.onclose = function(event) {
-            console.log("WebSocket connection closed:", event);
-        };
-    </script>
-</body>
-</html>
+    <!-- Caras Desconocidas -->
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-xl font-bold mb-4">Caras Desconocidas Recientes</h2>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {% for face in unknown_faces %}
+            <div class="border rounded p-2">
+                {% if face.processed_image %}
+                <img src="{{ face.processed_image.url }}" 
+                     alt="Unknown face" 
+                     class="w-full h-32 object-cover rounded">
+                <p class="text-sm text-gray-600 mt-2">
+                    {{ face.timestamp|date:"d/m/Y H:i" }}
+                </p>
+                {% else %}
+                <div class="w-full h-32 bg-gray-200 flex items-center justify-center">
+                    <span class="text-gray-500">No imagen</span>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

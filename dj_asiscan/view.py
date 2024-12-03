@@ -63,3 +63,22 @@ def generate_image(request):
 
 def simulate(request):
     return render(request, "display_image.html")
+
+#api  de camara o vista )_
+
+from django.http import JsonResponse
+from rest_framework.views import APIView
+import base64
+from .consumers import CameraConsumer
+
+class LatestImageView(APIView):
+    def get(self, request, *args, **kwargs):
+        # Obtener la �ltima imagen del WebSocket Consumer
+        consumer = CameraConsumer()
+        if consumer.last_image:
+            # Devolver la imagen en formato base64 como respuesta JSON
+            return JsonResponse({'image': consumer.last_image}, safe=False)
+        else:
+            return JsonResponse({'error': 'No hay imagen disponible'}, status=404)
+
+ 

@@ -1,0 +1,64 @@
+{% load custom_filters %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Horario de {{ estudiante.nombre }}</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8em;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 4px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .horario-cell {
+            white-space: pre-line;
+            font-size: 0.7em;
+        }
+        .asistencia-presente {
+            background-color: #90EE90; /* Verde claro */
+        }
+    </style>
+</head>
+<body>
+    <h2>Horario de {{ estudiante.nombre }}</h2>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Hora</th>
+                <th>Lunes</th>
+                <th>Martes</th>
+                <th>Miércoles</th>
+                <th>Jueves</th>
+                <th>Viernes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% regroup horarios|dictsort:"hora_inicio" by hora_inicio as horario_por_hora %}
+            {% for hora in horario_por_hora %}
+                <tr>
+                    <td>{{ hora.grouper }}</td>
+                    {% for dia in "Lunes,Martes,Miércoles,Jueves,Viernes"|split:"," %}
+                        <td class="horario-cell {% if asistencias_por_clase and dia == clase.dia_semana and hora.grouper == clase.hora_inicio %}asistencia-presente{% endif %}">
+                            {% for clase in horarios %}
+                                {% if clase.dia_semana == dia and clase.hora_inicio == hora.grouper %}
+                                    {{ clase.nombre_materia }}
+                                    {{ clase.salon }}
+                                    {{ clase.profesor }}
+                                    ({{ clase.hora_inicio }} - {{ clase.hora_fin }})
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

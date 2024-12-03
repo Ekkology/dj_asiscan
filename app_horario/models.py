@@ -1,9 +1,11 @@
 from django.db import models
+from app_usuarios.models import User
 
 class Estudiantes(models.Model):
     id_estudiante = models.AutoField(primary_key=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
     nombre = models.CharField(max_length=100)
-
+    
     def __str__(self):
         return self.nombre
 

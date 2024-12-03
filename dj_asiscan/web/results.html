@@ -1,0 +1,129 @@
+<!-- templates/face_recognition/results.html -->
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Resultados del Reconocimiento Facial</title>
+    <style>
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .results-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .image-container { grid-column: 1 / -1; }
+        .face-info { border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; }
+        .timestamp { color: #666; margin-bottom: 20px; }
+        .error { color: red; padding: 10px; border: 1px solid red; margin-bottom: 20px; }
+        .debug-info { 
+            background: #f5f5f5; 
+            padding: 15px; 
+            margin: 20px 0; 
+            border: 1px solid #ddd;
+            font-family: monospace;
+        }
+        .refresh-button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        .refresh-button:hover {
+            background-color: #45a049;
+        }
+        .file-list {
+            margin: 10px 0;
+            padding: 10px;
+            background: #fff;
+            border: 1px solid #ddd;
+        }
+        .file-item {
+            padding: 5px;
+            border-bottom: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Resultados del Reconocimiento Facial</h1>
+        
+        <button onclick="location.reload()" class="refresh-button">
+            Actualizar Resultados
+        </button>
+
+        {% if debug_mode %}
+            <div class="debug-info">
+                <h3>Informacion de Depuracion:</h3>
+                <p><strong>Directorio:</strong> {{ directory_info.directory }}</p>
+                <p><strong>Directorio existe:</strong> {{ directory_info.exists }}</p>
+                <p><strong>Es directorio:</strong> {{ directory_info.is_dir }}</p>
+                <p><strong>Total de archivos:</strong> {{ directory_info.total_files }}</p>
+                <p><strong>Total de archivos JSON:</strong> {{ directory_info.total_json_files }}</p>
+                
+                {% if directory_info.json_files %}
+                    <h4>Archivos JSON disponibles:</h4>
+                    <div class="file-list">
+                        {% for file in directory_info.json_files %}
+                            <div class="file-item">
+                                <strong>{{ file.name }}</strong><br>
+                                Modificado: {{ file.modified }}<br>
+                                Tamano: {{ file.size }} bytes
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                
+                {% if current_file %}
+                    <p><strong>Archivo actual:</strong> {{ current_file }}</p>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        {% if error %}
+            <div class="error">
+                <h3>Error:</h3>
+                <p>{{ error }}</p>
+            </div>
+        {% else %}
+            {% if timestamp %}
+                <div class="timestamp">
+                    Fecha y hora: {{ timestamp }}
+                </div>
+            {% endif %}
+            
+            {% if image_base64 %}
+                <div class="results-grid">
+                    <div class="image-container">
+                        <h2>Imagen Procesada</h2>
+                        <img src="data:image/jpeg;base64,{{ image_base64 }}" alt="Imagen procesada" style="max-width: 100%;">
+                    </div>
+                    
+                    <div class="verified-faces">
+                        <h2>Rostros Verificados ({{ verified_faces|length }})</h2>
+                        {% for face in verified_faces %}
+                            <div class="face-info">
+                                <p><strong>Nombre:</strong> {{ face.name_person }}</p>
+                                <p><strong>Distancia:</strong> {{ face.distance }}</p>
+                                <p><strong>Umbral:</strong> {{ face.threshold }}</p>
+                                <p><strong>Area facial:</strong> {{ face.facial_area }}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="unknown-faces">
+                        <h2>Rostros Desconocidos ({{ unknown_faces|length }})</h2>
+                        {% for face in unknown_faces %}
+                            <div class="face-info">
+                                <p><strong>Indice:</strong> {{ face.index }}</p>
+                                <p><strong>Area facial:</strong> {{ face.facial_area }}</p>
+                                <p><strong>Confianza:</strong> {{ face.confidence }}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% else %}
+                <p>No se encontro ninguna imagen en los resultados.</p>
+            {% endif %}
+        {% endif %}
+    </div>
+</body>
+</html>

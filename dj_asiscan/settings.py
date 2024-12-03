@@ -29,7 +29,7 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = [env('HOST_1'),'127.0.0.1','localhost']
+ALLOWED_HOSTS = [env('HOST_1'),'127.0.0.1','localhost', '190.32.225.9']
 
 STATICFILES_DIRS = [env('static_dir_var')]
 
@@ -45,6 +45,8 @@ INSTALLED_APPS = [
   #  'corsheaders',
     'app_usuarios',
     'rest_framework',
+    'rest_framework_simplejwt.token_blacklist',
+ #   'token_blacklist',
     'dj_asiscan',
     'CamApp',
     'app_horario',  
@@ -64,23 +66,31 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 ROOT_URLCONF = 'dj_asiscan.urls'
-
+SESSION_CACHE_ALIAS = 'default'
 CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels.layers.InMemoryChannelLayer',
-        # O usa Redis o una base de datos persistente si estás trabajando en producción
-        # 'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        # 'CONFIG': {
-        #     "hosts": [('127.0.0.1', 6379)],
-        # },
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("localhost", 6379)],
+        },
     },
 }
 #CORS_ALLOWED_ORIGINS = [
  #   'http://localhost:4321',
 #]
+CACHES = {
 
+    'default': {
+
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+
+        'LOCATION': 'unique-snowflake',
+
+    }
+
+}
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -120,6 +130,12 @@ REST_FRAMEWORK = {
     ],
 }
 
+
+SIMPLE_JWT = {
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'BLACKLIST_AFTER_ROTATION': True,
+}
+CSRF_TRUSTED_ORIGIN = ['192.168.202.66']
 # Database
 DATABASES = {
     'default': {
@@ -163,3 +179,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

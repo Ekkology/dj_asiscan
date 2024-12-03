@@ -1,17 +1,16 @@
-<!-- myapp/templates/home.html -->
 <!DOCTYPE html>
 {% load static %}
-<html lang="en">
+<html lang="es"> <!-- Cambi� el idioma a espa�ol (es) -->
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8"> <!-- Esta etiqueta es importante para especificar la codificaci�n -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pruebas Prototipo - Mi Cam</title>
 </head>
 <body style="text-align: center;">
     <h1>Pruebas Prototipo - Mi Cam (Prueba webhook 23)</h1>
     <div class="camara_def1">
-        <h2>Sección de Cámaras</h2>
-        <img id="cameraImage" src="" alt="Imagen de la cámara">
+        <h2>Secci�n de C�maras</h2> <!-- Correg� la codificaci�n de "C�maras" -->
+        <img id="cameraImage" src="" alt="Imagen de la camara">
     </div>
     <div class="button-container">
         <form id="servoForm" method="post">
@@ -21,16 +20,31 @@
             <button type="button" name="movimiento" value="2" class="btn">Abajo</button>
         </form>
     </div>
-
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // WebSocket para recibir imágenes
-            const cameraSocket = new WebSocket('ws://127.0.0.1:8000/ws/camera/');
-
+            // WebSocket para recibir imagenes
+            const cameraSocket = new WebSocket('ws://asiscan.sytes.net/ws/camera/');
+            
+            cameraSocket.onopen = function(e) {
+                console.log("Conexi�n WebSocket establecida"); // Correg� la codificaci�n de "Conexi�n"
+            };
+            cameraSocket.onerror = function(e) {
+                console.error("Error en WebSocket:", e);
+            };
+            
+            cameraSocket.onclose = function(e) {
+                console.log("Conexi�n WebSocket cerrada:", e); // Correg� la codificaci�n de "Conexi�n"
+            };
+            
             cameraSocket.onmessage = function(e) {
-                const data = JSON.parse(e.data);
-                const imageSrc = "data:image/png;base64," + data.image;
-                document.getElementById('cameraImage').src = imageSrc;
+                try {
+                    const data = JSON.parse(e.data);
+                    const imageSrc = "data:image/png;base64," + data.image;
+                    //const imageSrc =  data.image;
+                    document.getElementById('cameraImage').src = imageSrc;
+                } catch (error) {
+                    console.error("Error al procesar mensaje:", error);
+                }
             };
 
             // Funcionalidad de botones para enviar valores al servidor
@@ -38,7 +52,7 @@
             let inactivityTimeout;
 
             function sendValueToServer(movimiento) {
-                fetch('cam/display/enviar_valor_servos/', {
+                fetch('http://asiscan.sytes.net/cam/display/enviar_valor_servos/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
@@ -47,14 +61,14 @@
                     body: 'movimiento=' + movimiento
                 })
                 .then(response => response.json())
-                .then(data => console.log(data))
+                .then(data => console.log('Respuesta:', data))
                 .catch(error => console.error('Error:', error));
             }
 
             function resetInactivityTimeout() {
                 clearTimeout(inactivityTimeout);
                 inactivityTimeout = setTimeout(() => {
-                    sendValueToServer(0); // Enviar '0' después de 1 segundo de inactividad
+                    sendValueToServer(0); // Enviar '0' despu�s de 1 segundo de inactividad
                 }, 1000);
             }
 
@@ -63,7 +77,6 @@
                     sendValueToServer(this.value);
                     resetInactivityTimeout();
                 });
-
                 button.addEventListener('mouseup', resetInactivityTimeout);
             });
 

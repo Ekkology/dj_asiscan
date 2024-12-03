@@ -19,15 +19,19 @@ from django.urls import path, include
 from .view import home, simulate
 #from .view import obtener_imagen
 from CamApp import urls as cam_urls
+from .view import LatestImageView
 from .view import github_webhook
+from django.conf import settings
+from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',home),
     path('sim/',simulate),
     path('users/', include('app_usuarios.urls') ),
+    path('api/latest-image/', LatestImageView.as_view(), name='latest-image'),
     path('cam/', include(cam_urls)),  # Ruta de la rama orlando_branch
     path('horario/', include('app_horario.urls')),  # Ruta de la rama main
     path('asistencias/', include('app_asistencias.urls')),  # Ruta de la rama main
     #path('obtener_imagen/', obtener_imagen ),
     path('hook_1/', github_webhook ),
-]
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
